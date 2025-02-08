@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Data Table</title>
+    <script type="module">
+        // Firebase SDK ko import karein
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-database.js";
+
+        // Aapka Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCm7N4WTGDSDkMS5J9fb2P14C-ZQBQQO3k",
+            authDomain: "testwebsite-9f9c6.firebaseapp.com",
+            databaseURL: "https://testwebsite-9f9c6-default-rtdb.firebaseio.com",
+            projectId: "testwebsite-9f9c6",
+            storageBucket: "testwebsite-9f9c6.firebasestorage.app",
+            messagingSenderId: "17560662213",
+            appId: "1:17560662213:web:a18446e9456914f551c0ac"
+        };
+
+        // Firebase App Initialize karein
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Data Fetch karne ka Function
+        function fetchData() {
+            const dataRef = ref(db, "contacts"); // "contacts" node ka reference
+            const tableBody = document.getElementById("data-table");
+
+            onValue(dataRef, (snapshot) => {
+                tableBody.innerHTML = ""; // Pehle se existing data clear karein
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    const row = `
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>${data.email}</td>
+                            <td>${data.contact}</td>
+                            <td>${data.message}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row; // Row ko table me add karein
+                });
+            });
+        }
+
+        // Page load hone par data fetch karein
+        document.addEventListener("DOMContentLoaded", fetchData);
+    </script>
+</head>
+<body>
+    <h1>Firebase Realtime Database Table</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody id="data-table">
+        </tbody>
+    </table>
+</body>
+</html>
