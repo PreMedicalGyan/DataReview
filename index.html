@@ -49,9 +49,59 @@
         // Page load hone par data fetch karein
         document.addEventListener("DOMContentLoaded", fetchData);
     </script>
+
+    <!-- jsPDF aur autoTable Library include karein -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text("Firebase Realtime Database Table", 14, 10);
+
+            // Table ke data ko fetch karna
+            const table = document.querySelector("table");
+            const headers = [];
+            table.querySelectorAll("thead tr th").forEach(th => {
+                headers.push(th.innerText);
+            });
+
+            const data = [];
+            table.querySelectorAll("tbody tr").forEach(tr => {
+                const rowData = [];
+                tr.querySelectorAll("td").forEach(td => {
+                    rowData.push(td.innerText);
+                });
+                data.push(rowData);
+            });
+
+            // AutoTable Plugin se table generate karna
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: 20,
+                theme: 'grid',
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 3
+                },
+                columnStyles: {
+                    0: { cellWidth: 40 }, // Name
+                    1: { cellWidth: 50 }, // Email
+                    2: { cellWidth: 30 }, // Contact
+                    3: { cellWidth: 60 }  // Message
+                }
+            });
+
+            doc.save("firebase_data.pdf");
+        }
+    </script>
 </head>
 <body>
     <h1>Firebase Realtime Database Table</h1>
+    <button onclick="downloadPDF()">Download as PDF</button>
     <table border="1">
         <thead>
             <tr>
